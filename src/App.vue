@@ -8,7 +8,7 @@ export default {
     name: 'App',
     data() {
       return {
-        msg: `Account Book ${months[new Date().getMonth()]} `
+        msg: `Account Book : ${months[new Date().getMonth()]} `
       }
     },
     components: {
@@ -27,7 +27,7 @@ export default {
       <CurrentCalendar :msg="msg" />
 
       <nav>
-        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/">Current</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
@@ -40,7 +40,7 @@ export default {
 @import './assets/mixins.scss';
 header {
   line-height: 1.5;
-  max-height: 100vh;
+  max-height: 150vh;
 }
 
 .logo {
@@ -75,6 +75,7 @@ nav a:first-of-type {
 
 @media (min-width: 1024px) {
   header {
+    height: 90vh;
     display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);

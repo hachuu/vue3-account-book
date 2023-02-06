@@ -22,6 +22,7 @@ import HelloWorld from './components/HelloWorld.vue'
 
 <style scoped>
 @import './assets/mixins.scss';
+@import './assets/main.scss';
 header {
   line-height: 1.5;
   max-height: 100vh;

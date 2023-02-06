@@ -1,14 +1,30 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+  import { RouterLink, RouterView } from 'vue-router'
+  import CurrentCalendar from './components/CurrentCalendar.vue'
+</script>
+<script lang="ts">
+const months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ]
+export default {
+    name: 'App',
+    data() {
+      return {
+        msg: `Account Book ${months[new Date().getMonth()]} `
+      }
+    },
+    components: {
+      CurrentCalendar,
+      RouterLink,
+      RouterView
+    }
+  }
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <img alt="Quokka logo" class="logo" src="@/assets/quokka.svg" width="125" height="125" />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+      <CurrentCalendar :msg="msg" />
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
@@ -22,7 +38,6 @@ import HelloWorld from './components/HelloWorld.vue'
 
 <style scoped>
 @import './assets/mixins.scss';
-@import './assets/main.scss';
 header {
   line-height: 1.5;
   max-height: 100vh;

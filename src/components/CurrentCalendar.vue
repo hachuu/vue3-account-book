@@ -1,34 +1,73 @@
-<script setup lang="ts">
-defineProps<{
-  msg: string
-}>()
-const week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const currentMonth = new Date().getMonth();
-const currentDate = {date: new Date().getDate(), month: new Date().getMonth()};
+<script lang="ts">
+  const week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const currentDateInfo = {date: new Date().getDate(), month: new Date().getMonth()};
+  const currentCalendarDate = new Date();
+  
+  const settingCalendarDate = (baseDay = new Date()) => {
+    const currentMonth = baseDay.getMonth();
+    // 달력 array 일자 만들기
+    const calendarDate: {date: number, month: number}[] = [];
+    const firstDay = new Date(baseDay.getFullYear(), baseDay.getMonth(), 1).getDay();
+    const lastDay = new Date(baseDay.getFullYear(), baseDay.getMonth() + 1, 0).getDate();
+    const lastDayOfLastMonth = new Date(baseDay.getFullYear(), baseDay.getMonth(), 0).getDate();
+    const lastDayOfLastMonthToPush = lastDayOfLastMonth - firstDay + 1;
+    const nextMonth = new Date(baseDay.getFullYear(), baseDay.getMonth() + 1, 1).getDay();
+    const nextMonthToPush = 7 - nextMonth;
+    for (let i = 0; i < firstDay; i++) {
+      calendarDate.push({date: lastDayOfLastMonthToPush + i, month: baseDay.getMonth() - 1});
+    }
+    for (let i = 1; i <= lastDay; i++) {
+      calendarDate.push({date: i, month: baseDay.getMonth()});
+    }
+    for (let i = 1; i <= nextMonthToPush; i++) {
+      calendarDate.push({date: i, month: baseDay.getMonth() + 1});
+    }
+    const totalWeeks = Array.from({length: Math.ceil(calendarDate.length / 7)}, (v, i) => i);
+    console.log('이렇게 function으로 접근하면 console이 많이 찍히나? 성능 체크')
 
-// 달력 array 일자 만들기
-const calendar: {date: number, month: number}[] = [];
-const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).getDay();
-const lastDay = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-const lastDayOfLastMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate();
-const lastDayOfLastMonthToPush = lastDayOfLastMonth - firstDay + 1;
-const nextMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).getDay();
-const nextMonthToPush = 7 - nextMonth;
-for (let i = 0; i < firstDay; i++) {
-  calendar.push({date: lastDayOfLastMonthToPush + i, month: new Date().getMonth() - 1});
-}
-for (let i = 1; i <= lastDay; i++) {
-  calendar.push({date: i, month: new Date().getMonth()});
-}
-for (let i = 1; i <= nextMonthToPush; i++) {
-  calendar.push({date: i, month: new Date().getMonth() + 1});
-}
-const firstWeek = calendar.slice(0, 7);
-const secondWeek = calendar.slice(7, 14);
-const thirdWeek = calendar.slice(14, 21);
-const fourthWeek = calendar.slice(21, 28);
-const fifthWeek = calendar.slice(28, 35);
-const sixthWeek = calendar.slice(35, 42);
+    return {
+      currentMonth,
+      calendarDate,
+      totalWeeks
+    }
+  }
+
+  const calendarObj: {
+    currentMonth: number;
+    calendarDate: {
+        date: number;
+        month: number;
+    }[];
+    totalWeeks: number[];
+  } = settingCalendarDate();
+
+  export default {
+    name: 'CurrentCalendar',
+    props: {
+      msg: {
+        type: String,
+        required: true
+      }
+    },
+    data() {
+      return {
+        week,
+        calendarObj,
+        currentDateInfo,
+        currentCalendarDate
+      }
+    },
+    methods: {
+      prevMonth() {
+        this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
+        this.calendarObj = settingCalendarDate(this.currentCalendarDate);
+      },
+      nextMonth() {
+        this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
+        this.calendarObj = settingCalendarDate(this.currentCalendarDate);
+      }
+    }
+  }
 </script>
 
 <template>
@@ -36,9 +75,6 @@ const sixthWeek = calendar.slice(35, 42);
     <h1 class="green">{{ msg }}</h1>
     <h3>
       The day of week is {{ week[new Date().getDay()] }}.
-      <!-- You’ve successfully created a project with
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>. What's next? -->
     </h3>
     <!-- make a calendar date -->
     <div class="calendar">
@@ -51,12 +87,18 @@ const sixthWeek = calendar.slice(35, 42);
         <div class="calendar__header__day">Fri</div>
         <div class="calendar__header__day">Sat</div>
       </div>
-      <div class="calendar__body">
-        <div v-for="week in [0, 1, 2, 3, 4, 5]" :key="week" class="calendar__week">
-          <div v-for="day in calendar.slice(week * 7, (week + 1) * 7)" :key="day" class="calendar__day">
-            <button class="calendar__week__date" :class="{'today': day.date === currentDate.date && day.month === currentDate.month}" :disabled="day.month !== currentMonth">{{ day.date }}</button>
+      <div class="calendar__body" :class="{'wide': calendarObj.totalWeeks.length > 5}">
+        <div v-for="week in calendarObj.totalWeeks" :key="week" class="calendar__week">
+          <div v-for="day in calendarObj.calendarDate.slice(week * 7, (week + 1) * 7)" :key="`${day.date}${day.month}`" class="calendar__day">
+            <button class="calendar__week__date" :class="{'today': day.date === currentDateInfo.date && day.month === currentDateInfo.month}" :disabled="day.month !== calendarObj.currentMonth">{{ day.date }}</button>
           </div>
         </div>
+      </div>
+      <div class="calendar__move__button">
+        <button class="calendar__move__button__prev" @click="prevMonth()">{{ '<' }}</button>
+        <!-- 현재 연, 달 -->
+        <div class="calendar__move__button__current">{{ currentCalendarDate.getFullYear() }}년 {{ currentCalendarDate.getMonth() + 1 }}월</div>
+        <button class="calendar__move__button__next" @click="nextMonth()">{{ '>' }}</button>
       </div>
     </div>
   </div>
@@ -64,8 +106,6 @@ const sixthWeek = calendar.slice(35, 42);
 </template>
 
 <style lang='scss'>
-
-
 .greetings {
   display: flex;
   flex-direction: column;
@@ -93,7 +133,7 @@ h3 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 60%;
+  height: 65%;
   text-align: center;
   font-family: 'LuckyGuy';
   
@@ -103,6 +143,7 @@ h3 {
     align-items: center;
     justify-content: center;
     width: 100%;
+    height: 30px;
     text-align: center;
     font-family: 'LuckyGuy';
     .calendar__header__day {
@@ -126,6 +167,9 @@ h3 {
     width: 100%;
     text-align: center;
     font-family: 'LuckyGuy';
+    &.wide {
+      height: 80%;
+    }
     .calendar__week {
       display: flex;
       flex-direction: row;
@@ -166,6 +210,51 @@ h3 {
             background: linear-gradient(to left top, hsl(160deg, 100%, 37%) 0%, white 100%);
           }
         }
+      }
+    }
+  }
+  .calendar__move__button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
+    font-family: 'LuckyGuy';
+    .calendar__move__button__prev {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'LuckyGuy';
+      background: linear-gradient(to left top, #a3de83 0%, white 100%);
+      border-radius: 25% 10%;
+      &:hover {
+        cursor: pointer;
+        background: linear-gradient(to left top, #f7f39a 0%, white 100%);
+      }
+    }
+    .calendar__move__button__current {
+      width: 100px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'LuckyGuy';
+    }
+    .calendar__move__button__next {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'LuckyGuy';
+      background: linear-gradient(to left top, #a3de83 0%, white 100%);
+      border-radius: 25% 10%;
+      &:hover {
+        cursor: pointer;
+        background: linear-gradient(to left top, #f7f39a 0%, white 100%);
       }
     }
   }

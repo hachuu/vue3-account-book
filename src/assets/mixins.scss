@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'CookieRun';
+    src: url('src/assets/font/CookieRun Bold.ttf') format('truetype') ;
+}
+@font-face {
+    font-family: 'LuckyGuy';
+    src: url('src/assets/font/LuckiestGuy-Regular.ttf') format('truetype') ;
+}
+
+* {
+    font-family: 'CookieRun', 'LuckyGuy', sans-serif !important;
+}

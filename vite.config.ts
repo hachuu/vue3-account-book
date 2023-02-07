@@ -8,8 +8,23 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 export default defineConfig({
   plugins: [vue(), vueJsx()],
   resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+    alias: [
+      // {
+      //   find: /^~(.*)$/, replacement: 'node_modules/$1',
+      // },
+      {
+        find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url))
+      }
+    ]
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `
+          @import "@/assets/mixins.scss";
+          @import "@/assets/variables.scss";
+        `
+      }
     }
   }
 })

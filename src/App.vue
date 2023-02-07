@@ -1,34 +1,67 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+  import { RouterLink, RouterView } from 'vue-router'
+  import CurrentCalendar from './components/CurrentCalendar.vue'
+</script>
+<script lang="ts">
+const months = [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ]
+export default {
+    name: 'App',
+    data() {
+      return {
+        msg: `Account Book`
+      }
+    },
+    components: {
+      CurrentCalendar,
+      RouterLink,
+      RouterView
+    }
+  }
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <div class="made__by">
+      <img alt="Quokka logo" class="logo" src="@/assets/quokka.svg" width="125" height="125" />
+      <div class="made__by__link">
+        <p>made by <a href="https://github.com/hachuu/vue3-account-book">hachuu</a></p>
+      </div>
+    </div>
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
+      <CurrentCalendar :msg="msg" />
       <nav>
-        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/">Current</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
   </header>
-
   <RouterView />
 </template>
 
-<style scoped>
+<style lang='scss'>
+@import './assets/mixins.scss';
 header {
   line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+  max-height: 150vh;
+  .made__by {
+    margin: 0 0 2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    .made__by__link {
+      margin: 0 auto;
+      font-size: 0.3rem;
+      a {
+        color: var(--color-text);
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
 }
 
 nav {
@@ -56,15 +89,34 @@ nav a:first-of-type {
   border: 0;
 }
 
+content {
+  max-height: 500px;
+}
+
 @media (min-width: 1024px) {
   header {
+    height: 90vh;
     display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
+    position: sticky;
+    top: 0;
+    .made__by {
+      margin: 0 2rem 0 0;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      .made__by__link {
+        display: block;
+        a {
+          color: var(--color-text);
+          text-decoration: none;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
   }
 
   header .wrapper {

@@ -1,45 +1,18 @@
 <script lang="ts">
+  type CalendarDate = {date: number, month: number, year: number}
+  type CalendarObj = {
+      currentMonth: number;
+      calendarDate: {
+          date: number;
+          month: number;
+      }[];
+      totalWeeks: number[];
+    }
   const week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const currentDateInfo = {date: new Date().getDate(), month: new Date().getMonth()};
+  const currentDateInfo: CalendarDate = {date: new Date().getDate(), month: new Date().getMonth(), year: new Date().getFullYear()};
+  const selectedDateInfo: CalendarDate = {} as CalendarDate;
   const currentCalendarDate = new Date();
-  
-  const settingCalendarDate = (baseDay = new Date()) => {
-    const currentMonth = baseDay.getMonth();
-    // 달력 array 일자 만들기
-    const calendarDate: {date: number, month: number}[] = [];
-    const firstDay = new Date(baseDay.getFullYear(), baseDay.getMonth(), 1).getDay();
-    const lastDay = new Date(baseDay.getFullYear(), baseDay.getMonth() + 1, 0).getDate();
-    const lastDayOfLastMonth = new Date(baseDay.getFullYear(), baseDay.getMonth(), 0).getDate();
-    const lastDayOfLastMonthToPush = lastDayOfLastMonth - firstDay + 1;
-    const nextMonth = new Date(baseDay.getFullYear(), baseDay.getMonth() + 1, 1).getDay();
-    const nextMonthToPush = 7 - nextMonth;
-    for (let i = 0; i < firstDay; i++) {
-      calendarDate.push({date: lastDayOfLastMonthToPush + i, month: baseDay.getMonth() - 1});
-    }
-    for (let i = 1; i <= lastDay; i++) {
-      calendarDate.push({date: i, month: baseDay.getMonth()});
-    }
-    for (let i = 1; i <= nextMonthToPush; i++) {
-      calendarDate.push({date: i, month: baseDay.getMonth() + 1});
-    }
-    const totalWeeks = Array.from({length: Math.ceil(calendarDate.length / 7)}, (v, i) => i);
-    console.log('이렇게 function으로 접근하면 console이 많이 찍히나? 성능 체크')
-
-    return {
-      currentMonth,
-      calendarDate,
-      totalWeeks
-    }
-  }
-
-  const calendarObj: {
-    currentMonth: number;
-    calendarDate: {
-        date: number;
-        month: number;
-    }[];
-    totalWeeks: number[];
-  } = settingCalendarDate();
+  const calendarObj: CalendarObj = {} as CalendarObj;// = settingCalendarDate();
 
   export default {
     name: 'CurrentCalendar',
@@ -52,19 +25,54 @@
     data() {
       return {
         week,
-        calendarObj,
+        calendarObj: this.settingCalendarDate(),
         currentDateInfo,
+        selectedDateInfo,
         currentCalendarDate
       }
     },
     methods: {
+      settingCalendarDate(baseDay = new Date()) {
+        const currentMonth = baseDay.getMonth();
+        // 달력 array 일자 만들기
+        const calendarDate: CalendarDate[] = [];
+        const firstDay = new Date(baseDay.getFullYear(), baseDay.getMonth(), 1).getDay();
+        const lastDay = new Date(baseDay.getFullYear(), baseDay.getMonth() + 1, 0).getDate();
+        const lastDayOfLastMonth = new Date(baseDay.getFullYear(), baseDay.getMonth(), 0).getDate();
+        const lastDayOfLastMonthToPush = lastDayOfLastMonth - firstDay + 1;
+        const nextMonth = new Date(baseDay.getFullYear(), baseDay.getMonth() + 1, 1).getDay();
+        const nextMonthToPush = 7 - nextMonth;
+        for (let i = 0; i < firstDay; i++) {
+          calendarDate.push({date: lastDayOfLastMonthToPush + i, month: baseDay.getMonth() - 1, year: baseDay.getFullYear()});
+        }
+        for (let i = 1; i <= lastDay; i++) {
+          calendarDate.push({date: i, month: baseDay.getMonth(), year: baseDay.getFullYear()});
+        }
+        for (let i = 1; i <= nextMonthToPush; i++) {
+          calendarDate.push({date: i, month: baseDay.getMonth() + 1, year: baseDay.getFullYear()});
+        }
+        const totalWeeks = Array.from({length: Math.ceil(calendarDate.length / 7)}, (v, i) => i);
+
+        return {
+          currentMonth,
+          calendarDate,
+          totalWeeks
+        }
+      },
       prevMonth() {
         this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
-        this.calendarObj = settingCalendarDate(this.currentCalendarDate);
+        this.calendarObj = this.settingCalendarDate(this.currentCalendarDate);
       },
       nextMonth() {
         this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
-        this.calendarObj = settingCalendarDate(this.currentCalendarDate);
+        this.calendarObj = this.settingCalendarDate(this.currentCalendarDate);
+      },
+      showHistory(day: {date: number, month: number, year: number}) {
+        //router move
+        console.log(day)
+        const date = `${day.year}-${(day.month) < 10 ? '0' + (day.month + 1) : (day.month + 1)}-${day.date < 10 ? '0' + day.date : day.date}`;
+        this.selectedDateInfo = day;
+        this.$router.push({name: 'date history', params: {date}});
       }
     }
   }
@@ -90,7 +98,7 @@
       <div class="calendar__body" :class="{'wide': calendarObj.totalWeeks.length > 5}">
         <div v-for="week in calendarObj.totalWeeks" :key="week" class="calendar__week">
           <div v-for="day in calendarObj.calendarDate.slice(week * 7, (week + 1) * 7)" :key="`${day.date}${day.month}`" class="calendar__day">
-            <button class="calendar__week__date" :class="{'today': day.date === currentDateInfo.date && day.month === currentDateInfo.month}" :disabled="day.month !== calendarObj.currentMonth">{{ day.date }}</button>
+            <button class="calendar__week__date" :class="{'today': day.date === currentDateInfo.date && day.month === currentDateInfo.month && day.year === currentDateInfo.year}" :disabled="day.month !== calendarObj.currentMonth" @click="showHistory(day)">{{ day.date }}</button>
           </div>
         </div>
       </div>

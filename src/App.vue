@@ -31,7 +31,7 @@ export default {
     <div class="wrapper">
       <CurrentCalendar :msg="msg" />
       <nav>
-        <RouterLink to="/">Current</RouterLink>
+        <RouterLink to="/">Main</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
@@ -72,7 +72,7 @@ nav {
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: var(--color-border);
 }
 
 nav a.router-link-exact-active:hover {

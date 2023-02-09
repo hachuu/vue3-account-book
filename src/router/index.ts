@@ -6,8 +6,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'history',
-      component: PaymentView
+      name: 'main',
+      component: () => import('../views/MainView.vue')
     },
     {
       path: '/history/:date',

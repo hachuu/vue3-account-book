@@ -9,15 +9,21 @@
     },
     data() {
       return {
-        // date: this.$router.currentRoute.params.date
         date
       }
+    },
+    mounted() {
+      console.log('mounted')
+      this.date = this.$route.params.date;
     },
     watch: {
       $route(to, from) {
         this.date = to.params.date;
       }
     },
+    updated() {
+      console.log('updated')
+    }
   }
   
 </script>

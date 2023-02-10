@@ -41,6 +41,7 @@ export default {
 
 <style lang='scss'>
 @import './assets/mixins.scss';
+@import './assets/main.scss';
 header {
   line-height: 1.5;
   max-height: 150vh;

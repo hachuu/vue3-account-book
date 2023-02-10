@@ -31,6 +31,12 @@
         currentCalendarDate
       }
     },
+    // watch: {
+    //   $route(to, from) {
+    //     console.log('calendar에서 본 route 변경', to, from)
+        
+    //   }
+    // },
     methods: {
       settingCalendarDate(baseDay = new Date()) {
         const currentMonth = baseDay.getMonth();
@@ -98,7 +104,8 @@
       <div class="calendar__body" :class="{'wide': calendarObj.totalWeeks.length > 5}">
         <div v-for="week in calendarObj.totalWeeks" :key="week" class="calendar__week">
           <div v-for="day in calendarObj.calendarDate.slice(week * 7, (week + 1) * 7)" :key="`${day.date}${day.month}`" class="calendar__day">
-            <button class="calendar__week__date" :class="{'today': day.date === currentDateInfo.date && day.month === currentDateInfo.month && day.year === currentDateInfo.year}" :disabled="day.month !== calendarObj.currentMonth" @click="showHistory(day)">{{ day.date }}</button>
+            <button class="calendar__week__date" :class="{'today': day.date === currentDateInfo.date && day.month === currentDateInfo.month && day.year === currentDateInfo.year, 
+          'selected': day.date === selectedDateInfo.date && day.month === selectedDateInfo.month && day.year === selectedDateInfo.year}" :disabled="day.month !== calendarObj.currentMonth" @click="showHistory(day)">{{ day.date }}</button>
           </div>
         </div>
       </div>
@@ -216,6 +223,9 @@ h3 {
           }
           &.today {
             background: linear-gradient(to left top, hsl(160deg, 100%, 37%) 0%, white 100%);
+          }
+          &.selected {
+            background: linear-gradient(to left top, rgb(113, 189, 0) 0%, white 100%);
           }
         }
       }

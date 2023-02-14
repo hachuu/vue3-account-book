@@ -48,11 +48,11 @@ export default {
   <div v-if="histories.length">
     <HistoryItem :date="date" v-for="history in histories" :key="history">
       <template #icon>
-        <DocumentationIcon v-if="history.title === 'delivery'"/>
-        <ToolingIcon v-if="history.title === 'test'"/>
-        <EcosystemIcon v-if="history.title === 'eco'"/>
-        <CommunityIcon v-if="history.title === 'community'"/>
-        <SupportIcon v-if="history.title === 'support'"/>
+        <DocumentationIcon v-if="history.category === 'delivery'"/>
+        <ToolingIcon v-if="history.category === 'necessity'"/>
+        <EcosystemIcon v-if="history.category === 'eco'"/>
+        <CommunityIcon v-if="history.category === 'food'"/>
+        <SupportIcon v-if="history.category === 'hospital'"/>
       </template>
       <template #heading>{{ history.time }}</template>
       Vue’s

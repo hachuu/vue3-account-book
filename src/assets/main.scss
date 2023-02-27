@@ -9,15 +9,17 @@
 }
 
 a,
-.green {
+.point {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: #A0C3D2;
   transition: 0.4s;
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    // A0C3D2 => 0.2채도, 0.6명도
+    background-color: #A0C3D2;
+    color: #fff;
   }
 }
 

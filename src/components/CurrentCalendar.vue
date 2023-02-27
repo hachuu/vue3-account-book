@@ -1,45 +1,20 @@
 <script lang="ts">
+  import { monthsCnt, type MonthData } from '@/mocks/monthsTotalCnt'
+
+  type CalendarDate = {date: number, month: number, year: number}
+  type CalendarObj = {
+      currentMonth: number;
+      calendarDate: {
+          date: number;
+          month: number;
+      }[];
+      totalWeeks: number[];
+    }
   const week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const currentDateInfo = {date: new Date().getDate(), month: new Date().getMonth()};
+  const currentDateInfo: CalendarDate = {date: new Date().getDate(), month: new Date().getMonth(), year: new Date().getFullYear()};
+  const selectedDateInfo: CalendarDate = {} as CalendarDate;
   const currentCalendarDate = new Date();
-  
-  const settingCalendarDate = (baseDay = new Date()) => {
-    const currentMonth = baseDay.getMonth();
-    // 달력 array 일자 만들기
-    const calendarDate: {date: number, month: number}[] = [];
-    const firstDay = new Date(baseDay.getFullYear(), baseDay.getMonth(), 1).getDay();
-    const lastDay = new Date(baseDay.getFullYear(), baseDay.getMonth() + 1, 0).getDate();
-    const lastDayOfLastMonth = new Date(baseDay.getFullYear(), baseDay.getMonth(), 0).getDate();
-    const lastDayOfLastMonthToPush = lastDayOfLastMonth - firstDay + 1;
-    const nextMonth = new Date(baseDay.getFullYear(), baseDay.getMonth() + 1, 1).getDay();
-    const nextMonthToPush = 7 - nextMonth;
-    for (let i = 0; i < firstDay; i++) {
-      calendarDate.push({date: lastDayOfLastMonthToPush + i, month: baseDay.getMonth() - 1});
-    }
-    for (let i = 1; i <= lastDay; i++) {
-      calendarDate.push({date: i, month: baseDay.getMonth()});
-    }
-    for (let i = 1; i <= nextMonthToPush; i++) {
-      calendarDate.push({date: i, month: baseDay.getMonth() + 1});
-    }
-    const totalWeeks = Array.from({length: Math.ceil(calendarDate.length / 7)}, (v, i) => i);
-    console.log('이렇게 function으로 접근하면 console이 많이 찍히나? 성능 체크')
-
-    return {
-      currentMonth,
-      calendarDate,
-      totalWeeks
-    }
-  }
-
-  const calendarObj: {
-    currentMonth: number;
-    calendarDate: {
-        date: number;
-        month: number;
-    }[];
-    totalWeeks: number[];
-  } = settingCalendarDate();
+  const calendarObj: CalendarObj = {} as CalendarObj;// = settingCalendarDate();
 
   export default {
     name: 'CurrentCalendar',
@@ -52,19 +27,73 @@
     data() {
       return {
         week,
-        calendarObj,
+        calendarObj: this.settingCalendarDate(),
         currentDateInfo,
-        currentCalendarDate
+        selectedDateInfo,
+        currentCalendarDate,
       }
     },
+    // watch: {
+    //   $route(to, from) {
+    //     console.log('calendar에서 본 route 변경', to, from)
+        
+    //   }
+    // },
     methods: {
+      settingCalendarDate(baseDay = new Date()) {
+        const currentMonth = baseDay.getMonth();
+        // 달력 array 일자 만들기
+        const calendarDate: CalendarDate[] = [];
+        const firstDay = new Date(baseDay.getFullYear(), baseDay.getMonth(), 1).getDay();
+        const lastDay = new Date(baseDay.getFullYear(), baseDay.getMonth() + 1, 0).getDate();
+        const lastDayOfLastMonth = new Date(baseDay.getFullYear(), baseDay.getMonth(), 0).getDate();
+        const lastDayOfLastMonthToPush = lastDayOfLastMonth - firstDay + 1;
+        const nextMonth = new Date(baseDay.getFullYear(), baseDay.getMonth() + 1, 1).getDay();
+        const nextMonthToPush = 7 - nextMonth;
+        for (let i = 0; i < firstDay; i++) {
+          calendarDate.push({date: lastDayOfLastMonthToPush + i, month: baseDay.getMonth() - 1, year: baseDay.getFullYear()});
+        }
+        for (let i = 1; i <= lastDay; i++) {
+          calendarDate.push({date: i, month: baseDay.getMonth(), year: baseDay.getFullYear()});
+        }
+        for (let i = 1; i <= nextMonthToPush; i++) {
+          calendarDate.push({date: i, month: baseDay.getMonth() + 1, year: baseDay.getFullYear()});
+        }
+        const totalWeeks = Array.from({length: Math.ceil(calendarDate.length / 7)}, (v, i) => i);
+
+        return {
+          currentMonth,
+          calendarDate,
+          totalWeeks
+        }
+      },
       prevMonth() {
+        console.log('prev')
         this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
-        this.calendarObj = settingCalendarDate(this.currentCalendarDate);
+        this.calendarObj = this.settingCalendarDate(this.currentCalendarDate);
       },
       nextMonth() {
+        console.log('next')
         this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
-        this.calendarObj = settingCalendarDate(this.currentCalendarDate);
+        this.calendarObj = this.settingCalendarDate(this.currentCalendarDate);
+      },
+      showHistory(day: {date: number, month: number, year: number}) {
+        //router move
+        console.log(day)
+        const date = `${day.year}-${(day.month) < 10 ? '0' + (day.month + 1) : (day.month + 1)}-${day.date < 10 ? '0' + day.date : day.date}`;
+        this.selectedDateInfo = day;
+        this.$router.push({name: 'date history', params: {date}});
+      },
+      checkExistHistory(day: {date: number, month: number, year: number}) {
+        const stringTypeYearMonth = `${day.year}${(day.month) < 10 ? '0' + (day.month + 1) : (day.month + 1)}`;
+        console.log(stringTypeYearMonth)
+        const history: MonthData[] = monthsCnt.filter(data => data.month === stringTypeYearMonth) // 해당 날짜의 데이터가 있는지 확인
+        console.log('history 잇음 ' , history)
+        if (history && history.length > 0) {
+          const stringTypeDay = `${day.year}-${(day.month) < 10 ? '0' + (day.month + 1) : (day.month + 1)}-${day.date < 10 ? '0' + day.date : day.date}`
+          return history[0].datas.some(data => data.date === stringTypeDay);
+        }
+        return false;
       }
     }
   }
@@ -72,7 +101,7 @@
 
 <template>
   <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
+    <h1 class="point">{{ msg }}</h1>
     <h3>
       The day of week is {{ week[new Date().getDay()] }}.
     </h3>
@@ -90,7 +119,15 @@
       <div class="calendar__body" :class="{'wide': calendarObj.totalWeeks.length > 5}">
         <div v-for="week in calendarObj.totalWeeks" :key="week" class="calendar__week">
           <div v-for="day in calendarObj.calendarDate.slice(week * 7, (week + 1) * 7)" :key="`${day.date}${day.month}`" class="calendar__day">
-            <button class="calendar__week__date" :class="{'today': day.date === currentDateInfo.date && day.month === currentDateInfo.month}" :disabled="day.month !== calendarObj.currentMonth">{{ day.date }}</button>
+            <button class="calendar__week__date" :class="{'today': day.date === currentDateInfo.date && day.month === currentDateInfo.month && day.year === currentDateInfo.year, 
+          'selected': day.date === selectedDateInfo.date && day.month === selectedDateInfo.month && day.year === selectedDateInfo.year}" :disabled="day.month !== calendarObj.currentMonth" @click="showHistory(day)">
+              <span class="exist" v-if="checkExistHistory(day)">
+                {{ day.date }}
+              </span>
+              <span v-else>
+                {{ day.date }}
+              </span>
+          </button>
           </div>
         </div>
       </div>
@@ -154,7 +191,7 @@ h3 {
       justify-content: center;
       font-family: 'LuckyGuy';
       //linear
-      background: linear-gradient(to left top, #a3de83 0%, white 100%);
+      background: linear-gradient(to left top, #EAC7C7 0%, white 100%);
       border-radius: 25% 10%;
     }
   }
@@ -187,19 +224,22 @@ h3 {
         justify-content: center;
         font-family: 'LuckyGuy';
         .calendar__week__date {
+          //border 흐릿하게
+          border: 1px solid #f7f29a4c;
           width: 50px;
           height: 50px;
           display: flex;
           align-items: center;
           justify-content: center;
           font-family: 'LuckyGuy';
-          background: linear-gradient(to left top, #f7f39a 0%, white 100%);
+          background: #fff;
+          // background: linear-gradient(to top, #FCFFA6 0%, white 70%);
           border-radius: 25% 10%;
           // disabled 는 제외
           &:not(:disabled) {
             &:hover {
               cursor: pointer;
-              background: linear-gradient(to left top, #a3de83 0%, white 100%);
+              background: linear-gradient(to left top, #FCFFA6 0%, white 100%);
             }
           }
           &:disabled {
@@ -207,7 +247,16 @@ h3 {
             border-radius: 25% 10%;
           }
           &.today {
-            background: linear-gradient(to left top, hsl(160deg, 100%, 37%) 0%, white 100%);
+            background: linear-gradient(to left top, #B5DEFF 0%, white 100%);
+          }
+          &.selected {
+            background: linear-gradient(to left top, #C1FFD7 0%, white 100%);
+          }
+          .exist {
+            display: inline-block;
+            border: 4px dashed #C1FFD7;
+            border-radius: 5px;
+            padding: 10px 10px;
           }
         }
       }
@@ -228,11 +277,12 @@ h3 {
       align-items: center;
       justify-content: center;
       font-family: 'LuckyGuy';
-      background: linear-gradient(to left top, #a3de83 0%, white 100%);
+      border: none;
+      background: linear-gradient(to left top, #EAC7C7 0%, white 100%);
       border-radius: 25% 10%;
       &:hover {
         cursor: pointer;
-        background: linear-gradient(to left top, #f7f39a 0%, white 100%);
+        background: linear-gradient(to left top, #F7F5EB 0%, white 100%);
       }
     }
     .calendar__move__button__current {
@@ -250,11 +300,12 @@ h3 {
       align-items: center;
       justify-content: center;
       font-family: 'LuckyGuy';
-      background: linear-gradient(to left top, #a3de83 0%, white 100%);
+      border: none;
+      background: linear-gradient(to left top, #EAC7C7 0%, white 100%);
       border-radius: 25% 10%;
       &:hover {
         cursor: pointer;
-        background: linear-gradient(to left top, #f7f39a 0%, white 100%);
+        background: linear-gradient(to left top, #F7F5EB 0%, white 100%);
       }
     }
   }

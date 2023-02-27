@@ -31,7 +31,7 @@ export default {
     <div class="wrapper">
       <CurrentCalendar :msg="msg" />
       <nav>
-        <RouterLink to="/">Current</RouterLink>
+        <RouterLink to="/">Main</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
@@ -41,9 +41,13 @@ export default {
 
 <style lang='scss'>
 @import './assets/mixins.scss';
+@import './assets/main.scss';
 header {
   line-height: 1.5;
   max-height: 150vh;
+  // background-color: var(--color-background-soft);
+  border-radius: 1rem 0 0 1rem;
+  // position: fixed;
   .made__by {
     margin: 0 0 2rem 0;
     display: flex;
@@ -72,7 +76,7 @@ nav {
 }
 
 nav a.router-link-exact-active {
-  color: var(--color-text);
+  color: var(--color-border);
 }
 
 nav a.router-link-exact-active:hover {

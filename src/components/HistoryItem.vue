@@ -1,3 +1,14 @@
+<script lang="ts">
+export default {
+  name: 'HistoryItem',
+  props: {
+    date: {
+      type: String,
+      required: false
+    }
+  }
+}
+</script>
 <template>
   <div class="item">
     <i>

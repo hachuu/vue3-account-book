@@ -45,6 +45,9 @@ export default {
 header {
   line-height: 1.5;
   max-height: 150vh;
+  // background-color: var(--color-background-soft);
+  border-radius: 1rem 0 0 1rem;
+  // position: fixed;
   .made__by {
     margin: 0 0 2rem 0;
     display: flex;

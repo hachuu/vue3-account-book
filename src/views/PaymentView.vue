@@ -1,7 +1,8 @@
 <script lang="ts">
   import PaymentHistory from '../components/PaymentHistory.vue'
+  import { useRoute } from 'vue-router';
 
-  const date: string = '';
+  let date: string = '';
   export default {
     name: 'PaymentView',
     components: {
@@ -14,7 +15,9 @@
     },
     mounted() {
       console.log('mounted')
-      this.date = this.$route.params.date;
+      const route = useRoute();
+      this.date = typeof route.params.date === 'object' ? route.params.date[0] : route.params.date;
+      // this.date = this.$route.params.date;
     },
     watch: {
       $route(to, from) {

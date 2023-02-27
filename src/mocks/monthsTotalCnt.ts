@@ -1,4 +1,4 @@
-type PaymentData = {
+export type PaymentData = {
   date: string
   time: string
   title: string
@@ -10,13 +10,13 @@ type PaymentData = {
   paymentMethod?: PaymentMethodData | null,
 }
 
-type MonthData = {
+export type MonthData = {
   month: string,
   totalCnt: number,
   datas: PaymentData[],
 }
 
-enum IncomeExpenseType {
+export enum IncomeExpenseType {
   income = 'income',
   expense = 'expense',
 }
@@ -36,6 +36,10 @@ export const januaryData: PaymentData[] = [
   { date: '2023-01-21', time: '09:33', title: '휴게소', amount: 24000, category: 'food', memo: '아점', currency: 'KRW', incomeExpense: IncomeExpenseType.expense },
   { date: '2023-01-21', time: '12:05', title: '설 선물', amount: 110020, category: 'food', memo: '한우', currency: 'KRW', incomeExpense: IncomeExpenseType.expense },
   { date: '2023-01-21', time: '12:25', title: '떡', amount: 8000, category: 'food', memo: '제사 떡', currency: 'KRW', incomeExpense: IncomeExpenseType.expense },
+  { date: '2023-01-21', time: '12:25', title: '떡', amount: 8000, category: 'food', memo: '제사 떡', currency: 'KRW', incomeExpense: IncomeExpenseType.expense },
+  { date: '2023-01-21', time: '12:25', title: '떡', amount: 8000, category: 'food', memo: '제사 떡', currency: 'KRW', incomeExpense: IncomeExpenseType.expense },
+  { date: '2023-01-21', time: '12:25', title: '떡', amount: 8000, category: 'food', memo: '제사 떡', currency: 'KRW', incomeExpense: IncomeExpenseType.expense },
+  { date: '2023-01-21', time: '12:25', title: '떡', amount: 8000, category: 'food', memo: '제사 떡', currency: 'KRW', incomeExpense: IncomeExpenseType.expense },
   { date: '2023-01-22', time: '16:49', title: '휴게소', amount: 10000, category: 'food', memo: '휴게소 음식', currency: 'KRW', incomeExpense: IncomeExpenseType.expense },
   { date: '2023-01-22', time: '16:51', title: '간식', amount: 6300, category: 'food', memo: '회사 간식', currency: 'KRW', incomeExpense: IncomeExpenseType.expense },
   { date: '2023-01-25', time: '18:15', title: '약국 (목아픔)', amount: 4000, category: 'hospital', memo: '약국', currency: 'KRW', incomeExpense: IncomeExpenseType.expense },
@@ -47,6 +51,6 @@ export const februaryData: PaymentData[] = [
 ]
 
 export const monthsCnt: MonthData[] = [
-  { month: '202201', totalCnt: januaryData.length, datas: januaryData  },
-  { month: '202202', totalCnt: februaryData.length, datas: februaryData  },
+  { month: '202301', totalCnt: januaryData.length, datas: januaryData  },
+  { month: '202302', totalCnt: februaryData.length, datas: februaryData  },
 ]

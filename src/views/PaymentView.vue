@@ -33,6 +33,6 @@
 
 <template>
   <main>
-    <PaymentHistory :date="date" v-if="date"/>
+    <PaymentHistory :date="date"/>
   </main>
 </template>
